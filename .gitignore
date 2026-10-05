@@ -1,0 +1,27 @@
+node_modules
+.pnpm-store
+
+# builds
+dist
+.next
+out
+*.tsbuildinfo
+
+# env
+.env
+.env.local
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+bun.lockb
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# drizzle
+drizzle/meta/_journal.json.bak
