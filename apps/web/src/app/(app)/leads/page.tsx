@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { api, API_URL } from "@/lib/api";
+import { api, API_URL } from "@/lib/api-server";
 import { Badge, EmptyState, ErrorState, leadEtapas } from "@/components/ui";
 
 type SearchParams = Promise<{ etapa?: string }>;
@@ -37,7 +37,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
       <div className="flex flex-wrap gap-2 text-sm">
         <Link
           href="/leads"
-          className={`rounded-full border px-3 py-1 ${!etapaValida ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300"}`}
+          className={`rounded-full border px-3 py-1 ${!etapaValida ? "border-slate-900 bg-slate-900 text-white" : "border-slate-500"}`}
         >
           Todos
         </Link>
@@ -45,7 +45,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
           <Link
             key={item}
             href={`/leads?etapa=${item}`}
-            className={`rounded-full border px-3 py-1 capitalize ${etapaValida === item ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300"}`}
+            className={`rounded-full border px-3 py-1 capitalize ${etapaValida === item ? "border-slate-900 bg-slate-900 text-white" : "border-slate-500"}`}
           >
             {item.replace(/_/g, " ")}
           </Link>
@@ -55,9 +55,9 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
       {leads.length === 0 ? (
         <EmptyState message="Nenhum lead encontrado para este filtro." />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="overflow-hidden rounded-lg border border-slate-500 bg-white">
           <table className="w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase text-slate-500">
+            <thead className="border-b border-slate-500 bg-slate-50 text-left text-xs uppercase text-slate-700">
               <tr>
                 <th className="px-4 py-3">Nome</th>
                 <th className="px-4 py-3">Contato</th>

@@ -8,6 +8,7 @@ import { imoveisRoutes } from "./routes/imoveis";
 import { visitasRoutes } from "./routes/visitas";
 import { interacoesRoutes } from "./routes/interacoes";
 import { dashboardRoutes } from "./routes/dashboard";
+import { HttpError } from "./plugins/auth";
 
 const app = new Elysia()
   .use(cors())
@@ -47,6 +48,20 @@ const app = new Elysia()
   .use(visitasRoutes)
   .use(interacoesRoutes)
   .use(dashboardRoutes)
+  // Converte os guards (requireAuth/requireRole) na resposta JSON padrão da API.
+  .onError(({ code, error, set }) => {
+    if (error instanceof HttpError) {
+      set.status = error.status;
+      return { success: false, message: error.message };
+    }
+    if (code === "NOT_FOUND") {
+      set.status = 404;
+      return { success: false, message: "Rota não encontrada" };
+    }
+    console.error(error);
+    set.status = 500;
+    return { success: false, message: "Erro interno do servidor" };
+  })
   .listen({ port: Number(process.env.PORT) || 3000 });
 
 const port = Number(process.env.PORT) || 3000;

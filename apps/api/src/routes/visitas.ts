@@ -2,12 +2,16 @@ import { Elysia, t } from "elysia";
 import { db } from "../db";
 import { visitas, leads, imoveis } from "../db/schema";
 import { eq, desc, and } from "drizzle-orm";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
 
 const visitaStatusList = ["agendada", "realizada", "cancelada", "reagendada"] as const;
 type VisitaStatus = (typeof visitaStatusList)[number];
 
 export const visitasRoutes = new Elysia({ prefix: "/visitas" })
-  .get("/", async ({ query }) => {
+  .use(createJwt())
+  .derive(resolveCurrentUser)
+  .get("/", async ({ currentUser, query }) => {
+    requireAuth({ currentUser });
     const queryBuilder = db.select({
       id: visitas.id,
       leadId: visitas.leadId,
@@ -59,7 +63,8 @@ export const visitasRoutes = new Elysia({ prefix: "/visitas" })
       summary: "Listar visitas com filtros",
     },
   })
-  .get("/:id", async ({ params, set }) => {
+  .get("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const result = await db.select({
       id: visitas.id,
       leadId: visitas.leadId,
@@ -91,7 +96,8 @@ export const visitasRoutes = new Elysia({ prefix: "/visitas" })
       summary: "Obter visita por ID",
     },
   })
-  .post("/", async ({ body, set }) => {
+  .post("/", async ({ currentUser, body, set }) => {
+    requireAuth({ currentUser });
     try {
       const [newVisita] = await db.insert(visitas).values({
         leadId: body.leadId,
@@ -119,7 +125,8 @@ export const visitasRoutes = new Elysia({ prefix: "/visitas" })
       summary: "Criar visita",
     },
   })
-  .put("/:id", async ({ params, body, set }) => {
+  .put("/:id", async ({ currentUser, params, body, set }) => {
+    requireAuth({ currentUser });
     const [updatedVisita] = await db.update(visitas).set({
       leadId: body.leadId,
       imovelId: body.imovelId,
@@ -149,7 +156,8 @@ export const visitasRoutes = new Elysia({ prefix: "/visitas" })
       summary: "Atualizar visita",
     },
   })
-  .delete("/:id", async ({ params, set }) => {
+  .delete("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const [deleted] = await db.delete(visitas).where(eq(visitas.id, params.id)).returning({ id: visitas.id });
     if (!deleted) {
       set.status = 404;

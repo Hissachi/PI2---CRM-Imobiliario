@@ -2,9 +2,14 @@ import { Elysia, t } from "elysia";
 import { db } from "../db";
 import { leads, imoveis, visitas } from "../db/schema";
 import { count, eq, gte, lte, and, sql } from "drizzle-orm";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
 
 export const dashboardRoutes = new Elysia({ prefix: "/dashboard" })
-  .get("/", async () => {
+  .use(createJwt())
+  .derive(resolveCurrentUser)
+  .get("/", async ({ currentUser }) => {
+    requireAuth({ currentUser });
+
     const [leadsTotal] = await db.select({ value: count() }).from(leads);
     const [imoveisTotal] = await db.select({ value: count() }).from(imoveis);
     const [imoveisDisponiveis] = await db

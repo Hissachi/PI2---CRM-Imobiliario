@@ -2,9 +2,13 @@ import { Elysia, t } from "elysia";
 import { db } from "../db";
 import { interacoes, leads } from "../db/schema";
 import { eq, desc } from "drizzle-orm";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
 
 export const interacoesRoutes = new Elysia({ prefix: "/interacoes" })
-  .get("/", async ({ query }) => {
+  .use(createJwt())
+  .derive(resolveCurrentUser)
+  .get("/", async ({ currentUser, query }) => {
+    requireAuth({ currentUser });
     const queryBuilder = db.select({
       id: interacoes.id,
       leadId: interacoes.leadId,
@@ -34,7 +38,8 @@ export const interacoesRoutes = new Elysia({ prefix: "/interacoes" })
       summary: "List all interações",
     },
   })
-  .get("/:id", async ({ params, set }) => {
+  .get("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const result = await db.select().from(interacoes).where(eq(interacoes.id, params.id)).limit(1);
     if (result.length === 0) {
       set.status = 404;
@@ -50,7 +55,8 @@ export const interacoesRoutes = new Elysia({ prefix: "/interacoes" })
       summary: "Get interação by ID",
     },
   })
-  .post("/", async ({ body, set }) => {
+  .post("/", async ({ currentUser, body, set }) => {
+    requireAuth({ currentUser });
     try {
       const [newInteracao] = await db.insert(interacoes).values({
         leadId: body.leadId,
@@ -76,7 +82,8 @@ export const interacoesRoutes = new Elysia({ prefix: "/interacoes" })
       summary: "Create a new interação",
     },
   })
-  .put("/:id", async ({ params, body, set }) => {
+  .put("/:id", async ({ currentUser, params, body, set }) => {
+    requireAuth({ currentUser });
     const [updatedInteracao] = await db.update(interacoes).set({
       leadId: body.leadId,
       tipo: body.tipo,
@@ -103,7 +110,8 @@ export const interacoesRoutes = new Elysia({ prefix: "/interacoes" })
       summary: "Update interação",
     },
   })
-  .delete("/:id", async ({ params, set }) => {
+  .delete("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const [deleted] = await db.delete(interacoes).where(eq(interacoes.id, params.id)).returning({ id: interacoes.id });
     if (!deleted) {
       set.status = 404;

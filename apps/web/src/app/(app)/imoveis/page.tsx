@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { api, API_URL } from "@/lib/api";
+import { api, API_URL } from "@/lib/api-server";
 import { Badge, EmptyState, ErrorState } from "@/components/ui";
 
 export default async function ImoveisPage() {
@@ -36,13 +36,13 @@ export default async function ImoveisPage() {
           {imoveis.map((imovel) => (
             <article
               key={imovel.id}
-              className="flex flex-col rounded-lg border border-slate-200 bg-white p-5"
+              className="flex flex-col rounded-lg border border-slate-500 bg-white p-5"
             >
               <div className="mb-2 flex items-start justify-between gap-2">
                 <h2 className="font-medium leading-snug">{imovel.titulo}</h2>
                 <Badge value={imovel.status} kind="imovel" />
               </div>
-              <p className="text-sm text-slate-500 capitalize">
+              <p className="text-sm text-slate-600 capitalize">
                 {imovel.tipo} - {imovel.finalidade}
               </p>
               <p className="mt-1 text-xs text-slate-500">

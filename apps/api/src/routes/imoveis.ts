@@ -2,6 +2,7 @@ import { Elysia, t } from "elysia";
 import { db } from "../db";
 import { imoveis } from "../db/schema";
 import { eq, desc, and, gte, lte, ilike } from "drizzle-orm";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
 
 const imovelTipos = ["casa", "apartamento", "terreno", "comercial"] as const;
 const imovelFinalidades = ["venda", "locacao"] as const;
@@ -12,7 +13,10 @@ type ImovelFinalidade = (typeof imovelFinalidades)[number];
 type ImovelStatus = (typeof imovelStatusList)[number];
 
 export const imoveisRoutes = new Elysia({ prefix: "/imoveis" })
-  .get("/", async ({ query }) => {
+  .use(createJwt())
+  .derive(resolveCurrentUser)
+  .get("/", async ({ currentUser, query }) => {
+    requireAuth({ currentUser });
     const queryBuilder = db.select().from(imoveis);
 
     const conditions = [];
@@ -54,7 +58,8 @@ export const imoveisRoutes = new Elysia({ prefix: "/imoveis" })
       summary: "List all imóveis with filters",
     },
   })
-  .get("/:id", async ({ params, set }) => {
+  .get("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const result = await db.select().from(imoveis).where(eq(imoveis.id, params.id)).limit(1);
     if (result.length === 0) {
       set.status = 404;
@@ -70,7 +75,8 @@ export const imoveisRoutes = new Elysia({ prefix: "/imoveis" })
       summary: "Get imóvel by ID",
     },
   })
-  .post("/", async ({ body, set }) => {
+  .post("/", async ({ currentUser, body, set }) => {
+    requireAuth({ currentUser });
     try {
       const [newImovel] = await db.insert(imoveis).values({
         tipo: body.tipo,
@@ -124,7 +130,8 @@ export const imoveisRoutes = new Elysia({ prefix: "/imoveis" })
       summary: "Create a new imóvel",
     },
   })
-  .put("/:id", async ({ params, body, set }) => {
+  .put("/:id", async ({ currentUser, params, body, set }) => {
+    requireAuth({ currentUser });
     const [updatedImovel] = await db.update(imoveis).set({
       tipo: body.tipo,
       finalidade: body.finalidade,
@@ -180,7 +187,8 @@ export const imoveisRoutes = new Elysia({ prefix: "/imoveis" })
       summary: "Update imóvel",
     },
   })
-  .delete("/:id", async ({ params, set }) => {
+  .delete("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const [deleted] = await db.delete(imoveis).where(eq(imoveis.id, params.id)).returning({ id: imoveis.id });
     if (!deleted) {
       set.status = 404;

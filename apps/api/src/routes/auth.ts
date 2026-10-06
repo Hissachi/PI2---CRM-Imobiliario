@@ -42,12 +42,14 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     return {
       success: true,
       data: {
-        id: user.id,
-        nome: user.nome,
-        email: user.email,
-        role: user.role,
+        user: {
+          id: user.id,
+          nome: user.nome,
+          email: user.email,
+          role: user.role,
+        },
+        token,
       },
-      token,
     };
   }, {
     body: t.Object({

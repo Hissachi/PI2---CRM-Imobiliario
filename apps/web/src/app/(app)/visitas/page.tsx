@@ -1,4 +1,4 @@
-import { api, API_URL } from "@/lib/api";
+import { api, API_URL } from "@/lib/api-server";
 import { Badge, EmptyState, ErrorState } from "@/components/ui";
 
 export default async function VisitasPage() {
@@ -31,11 +31,11 @@ export default async function VisitasPage() {
             {agendadas.map((visita) => (
               <li
                 key={visita.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-4"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-500 bg-white p-4"
               >
                 <div>
                   <p className="font-medium">{visita.lead?.nome ?? `Lead #${visita.leadId}`}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-600">
                     {visita.imovel?.titulo ?? `Imóvel #${visita.imovelId}`}
                   </p>
                 </div>
@@ -53,9 +53,9 @@ export default async function VisitasPage() {
 
       <section className="space-y-3">
         <h2 className="font-medium">Todas as visitas ({visitas.length})</h2>
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="overflow-hidden rounded-lg border border-slate-500 bg-white">
           <table className="w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase text-slate-500">
+            <thead className="border-b border-slate-500 bg-slate-50 text-left text-xs uppercase text-slate-700">
               <tr>
                 <th className="px-4 py-3">Data</th>
                 <th className="px-4 py-3">Lead</th>

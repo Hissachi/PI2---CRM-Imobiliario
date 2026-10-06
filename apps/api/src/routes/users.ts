@@ -3,9 +3,21 @@ import { db } from "../db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { createJwt, resolveCurrentUser, requireRole } from "../plugins/auth";
 
+/**
+ * CRUD de usuários, restrito a admins.
+ *
+ * `requireRole("admin")` é chamado em todos os handlers: a autorização é
+ * verificada na API, independentemente do que o frontend faça. O middleware do
+ * frontend esconde o menu, mas não é a fronteira de segurança.
+ */
 export const usersRoutes = new Elysia({ prefix: "/users" })
-  .get("/", async () => {
+  .use(createJwt())
+  .derive(resolveCurrentUser)
+  .get("/", async ({ currentUser }) => {
+    requireRole({ currentUser }, "admin");
+
     const result = await db.select({
       id: users.id,
       nome: users.nome,
@@ -21,7 +33,9 @@ export const usersRoutes = new Elysia({ prefix: "/users" })
       summary: "Listar todos os usuarios",
     },
   })
-  .get("/:id", async ({ params, set }) => {
+  .get("/:id", async ({ currentUser, params, set }) => {
+    requireRole({ currentUser }, "admin");
+
     const result = await db.select({
       id: users.id,
       nome: users.nome,
@@ -44,7 +58,9 @@ export const usersRoutes = new Elysia({ prefix: "/users" })
       summary: "Obter usuario por ID",
     },
   })
-  .post("/", async ({ body, set }) => {
+  .post("/", async ({ currentUser, body, set }) => {
+    requireRole({ currentUser }, "admin");
+
     try {
       const hashedPassword = await bcrypt.hash(body.senha, 10);
       const [newUser] = await db.insert(users).values({
@@ -82,7 +98,9 @@ export const usersRoutes = new Elysia({ prefix: "/users" })
       summary: "Criar usuario",
     },
   })
-  .put("/:id", async ({ params, body, set }) => {
+  .put("/:id", async ({ currentUser, params, body, set }) => {
+    requireRole({ currentUser }, "admin");
+
     try {
       const updateData: any = {
         nome: body.nome,
@@ -129,7 +147,9 @@ export const usersRoutes = new Elysia({ prefix: "/users" })
       summary: "Atualizar usuario",
     },
   })
-  .delete("/:id", async ({ params, set }) => {
+  .delete("/:id", async ({ currentUser, params, set }) => {
+    requireRole({ currentUser }, "admin");
+
     const [deleted] = await db.delete(users).where(eq(users.id, params.id)).returning({ id: users.id });
     if (!deleted) {
       set.status = 404;

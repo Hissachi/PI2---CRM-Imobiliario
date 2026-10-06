@@ -2,12 +2,16 @@ import { Elysia, t } from "elysia";
 import { db } from "../db";
 import { leads, users } from "../db/schema";
 import { eq, desc, and, ilike, or } from "drizzle-orm";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
 
 const leadEtapas = ["novo", "em_atendimento", "visita_agendada", "proposta", "fechado", "perdido"] as const;
 type LeadEtapa = (typeof leadEtapas)[number];
 
 export const leadsRoutes = new Elysia({ prefix: "/leads" })
-  .get("/", async ({ query }) => {
+  .use(createJwt())
+  .derive(resolveCurrentUser)
+  .get("/", async ({ currentUser, query }) => {
+    requireAuth({ currentUser });
     const queryBuilder = db.select({
       id: leads.id,
       nome: leads.nome,
@@ -61,7 +65,8 @@ export const leadsRoutes = new Elysia({ prefix: "/leads" })
       summary: "Listar leads com filtros",
     },
   })
-  .get("/:id", async ({ params, set }) => {
+  .get("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const result = await db.select({
       id: leads.id,
       nome: leads.nome,
@@ -97,7 +102,8 @@ export const leadsRoutes = new Elysia({ prefix: "/leads" })
       summary: "Obter lead por ID",
     },
   })
-  .post("/", async ({ body, set }) => {
+  .post("/", async ({ currentUser, body, set }) => {
+    requireAuth({ currentUser });
     try {
       const [newLead] = await db.insert(leads).values({
         nome: body.nome,
@@ -129,7 +135,8 @@ export const leadsRoutes = new Elysia({ prefix: "/leads" })
       summary: "Criar lead",
     },
   })
-  .put("/:id", async ({ params, body, set }) => {
+  .put("/:id", async ({ currentUser, params, body, set }) => {
+    requireAuth({ currentUser });
     const [updatedLead] = await db.update(leads).set({
       nome: body.nome,
       email: body.email,
@@ -163,7 +170,8 @@ export const leadsRoutes = new Elysia({ prefix: "/leads" })
       summary: "Atualizar lead",
     },
   })
-  .delete("/:id", async ({ params, set }) => {
+  .delete("/:id", async ({ currentUser, params, set }) => {
+    requireAuth({ currentUser });
     const [deleted] = await db.delete(leads).where(eq(leads.id, params.id)).returning({ id: leads.id });
     if (!deleted) {
       set.status = 404;

@@ -1,5 +1,5 @@
-import { api, API_URL } from "@/lib/api";
-import { Badge, EmptyState, ErrorState } from "@/components/ui";
+import { api, API_URL } from "@/lib/api-server";
+import { Badge, ErrorState } from "@/components/ui";
 
 export default async function DashboardPage() {
   try {
@@ -17,7 +17,7 @@ export default async function DashboardPage() {
       <div className="space-y-8">
         <section>
           <h1 className="text-2xl font-semibold">Dashboard</h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-600">
             Valor em carteira disponível:{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
@@ -29,15 +29,15 @@ export default async function DashboardPage() {
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map((card) => (
-            <div key={card.label} className="rounded-lg border border-slate-200 bg-white p-5">
-              <p className="text-sm text-slate-500">{card.label}</p>
+            <div key={card.label} className="rounded-lg border border-slate-500 bg-white p-5">
+              <p className="text-sm text-slate-600">{card.label}</p>
               <p className="mt-1 text-3xl font-semibold">{card.value}</p>
             </div>
           ))}
         </section>
 
         <section className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-lg border border-slate-200 bg-white p-5">
+          <div className="rounded-lg border border-slate-500 bg-white p-5">
             <h2 className="mb-4 font-medium">Leads por etapa</h2>
             <ul className="space-y-3">
               {data.leadsPorEtapa.map((item) => (
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
             </ul>
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-5">
+          <div className="rounded-lg border border-slate-500 bg-white p-5">
             <h2 className="mb-4 font-medium">Leads por origem</h2>
             <ul className="space-y-2 text-sm">
               {data.leadsPorOrigem.map((item) => (
@@ -81,8 +81,4 @@ export default async function DashboardPage() {
       </div>
     );
   }
-}
-
-export function generateEmptyState() {
-  return <EmptyState message="Sem dados" />;
 }
