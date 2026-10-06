@@ -14,6 +14,7 @@
     "db:studio": "pnpm --filter @crm/api db:studio",
     "db:seed": "pnpm --filter @crm/api db:seed",
     "lint": "pnpm --filter @crm/web lint",
+    "contrast": "pnpm --filter @crm/web contrast",
     "typecheck": "pnpm --filter @crm/schemas typecheck && pnpm --filter @crm/api typecheck && pnpm --filter @crm/web typecheck"
   },
   "devDependencies": {
