@@ -1,13 +1,13 @@
 import { Elysia, t } from "elysia";
-import { db } from "../db";
-import { leads, users } from "../db/schema";
+import { db } from "../db/index.js";
+import { leads, users } from "../db/schema.js";
 import { eq, desc, and, ilike, or } from "drizzle-orm";
-import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth.js";
 
 const leadEtapas = ["novo", "em_atendimento", "visita_agendada", "proposta", "fechado", "perdido"] as const;
 type LeadEtapa = (typeof leadEtapas)[number];
 
-export const leadsRoutes = new Elysia({ prefix: "/leads" })
+export const leadsRoutes = new Elysia({ prefix: "/api/leads" })
   .use(createJwt())
   .derive(resolveCurrentUser)
   .get("/", async ({ currentUser, query }) => {

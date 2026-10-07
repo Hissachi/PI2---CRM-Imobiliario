@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "../db/index.js";
+import { users } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
-export const authRoutes = new Elysia({ prefix: "/auth" })
+export const authRoutes = new Elysia({ prefix: "/api/auth" })
   .use(
     jwt({
       name: "jwt",

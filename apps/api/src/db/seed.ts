@@ -1,5 +1,5 @@
-import { db } from "./index";
-import { users, leads, imoveis, visitas, interacoes } from "./schema";
+import { db } from "./index.js";
+import { users, leads, imoveis, visitas, interacoes } from "./schema.js";
 import bcrypt from "bcryptjs";
 
 async function main() {

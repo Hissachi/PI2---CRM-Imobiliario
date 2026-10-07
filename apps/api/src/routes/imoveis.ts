@@ -1,8 +1,8 @@
 import { Elysia, t } from "elysia";
-import { db } from "../db";
-import { imoveis } from "../db/schema";
+import { db } from "../db/index.js";
+import { imoveis } from "../db/schema.js";
 import { eq, desc, and, gte, lte, ilike } from "drizzle-orm";
-import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth.js";
 
 const imovelTipos = ["casa", "apartamento", "terreno", "comercial"] as const;
 const imovelFinalidades = ["venda", "locacao"] as const;
@@ -12,7 +12,7 @@ type ImovelTipo = (typeof imovelTipos)[number];
 type ImovelFinalidade = (typeof imovelFinalidades)[number];
 type ImovelStatus = (typeof imovelStatusList)[number];
 
-export const imoveisRoutes = new Elysia({ prefix: "/imoveis" })
+export const imoveisRoutes = new Elysia({ prefix: "/api/imoveis" })
   .use(createJwt())
   .derive(resolveCurrentUser)
   .get("/", async ({ currentUser, query }) => {

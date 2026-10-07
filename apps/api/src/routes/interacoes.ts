@@ -1,10 +1,10 @@
 import { Elysia, t } from "elysia";
-import { db } from "../db";
-import { interacoes, leads } from "../db/schema";
+import { db } from "../db/index.js";
+import { interacoes, leads } from "../db/schema.js";
 import { eq, desc } from "drizzle-orm";
-import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth.js";
 
-export const interacoesRoutes = new Elysia({ prefix: "/interacoes" })
+export const interacoesRoutes = new Elysia({ prefix: "/api/interacoes" })
   .use(createJwt())
   .derive(resolveCurrentUser)
   .get("/", async ({ currentUser, query }) => {

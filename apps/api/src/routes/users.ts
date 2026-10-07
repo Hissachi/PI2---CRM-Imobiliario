@@ -1,9 +1,9 @@
 import { Elysia, t } from "elysia";
-import { db } from "../db";
-import { users } from "../db/schema";
+import { db } from "../db/index.js";
+import { users } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-import { createJwt, resolveCurrentUser, requireRole } from "../plugins/auth";
+import { createJwt, resolveCurrentUser, requireRole } from "../plugins/auth.js";
 
 /**
  * CRUD de usuários, restrito a admins.
@@ -12,7 +12,7 @@ import { createJwt, resolveCurrentUser, requireRole } from "../plugins/auth";
  * verificada na API, independentemente do que o frontend faça. O middleware do
  * frontend esconde o menu, mas não é a fronteira de segurança.
  */
-export const usersRoutes = new Elysia({ prefix: "/users" })
+export const usersRoutes = new Elysia({ prefix: "/api/users" })
   .use(createJwt())
   .derive(resolveCurrentUser)
   .get("/", async ({ currentUser }) => {

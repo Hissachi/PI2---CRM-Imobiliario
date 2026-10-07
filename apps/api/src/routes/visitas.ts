@@ -1,13 +1,13 @@
 import { Elysia, t } from "elysia";
-import { db } from "../db";
-import { visitas, leads, imoveis } from "../db/schema";
+import { db } from "../db/index.js";
+import { visitas, leads, imoveis } from "../db/schema.js";
 import { eq, desc, and } from "drizzle-orm";
-import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth.js";
 
 const visitaStatusList = ["agendada", "realizada", "cancelada", "reagendada"] as const;
 type VisitaStatus = (typeof visitaStatusList)[number];
 
-export const visitasRoutes = new Elysia({ prefix: "/visitas" })
+export const visitasRoutes = new Elysia({ prefix: "/api/visitas" })
   .use(createJwt())
   .derive(resolveCurrentUser)
   .get("/", async ({ currentUser, query }) => {

@@ -13,7 +13,7 @@ import type {
 } from "@crm/schemas";
 import { getToken } from "@/lib/auth/storage";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
 
 type ImovelInput = {
   tipo: Imovel["tipo"];

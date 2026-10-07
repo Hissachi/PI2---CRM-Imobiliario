@@ -1,10 +1,10 @@
 import { Elysia, t } from "elysia";
-import { db } from "../db";
-import { leads, imoveis, visitas } from "../db/schema";
+import { db } from "../db/index.js";
+import { leads, imoveis, visitas } from "../db/schema.js";
 import { count, eq, gte, lte, and, sql } from "drizzle-orm";
-import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth";
+import { createJwt, resolveCurrentUser, requireAuth } from "../plugins/auth.js";
 
-export const dashboardRoutes = new Elysia({ prefix: "/dashboard" })
+export const dashboardRoutes = new Elysia({ prefix: "/api/dashboard" })
   .use(createJwt())
   .derive(resolveCurrentUser)
   .get("/", async ({ currentUser }) => {
